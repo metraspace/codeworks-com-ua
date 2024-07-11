@@ -1,0 +1,23 @@
+<div class="overview">
+  <div class="visualizer-container">
+    <visualizer></visualizer>
+  </div>
+  <div class="top-actions-container">
+    <add-new-item-form *ngIf="isAddNewGridItemFormAvailable"
+                       (gridItemCreatedEvent)="toggleAddGridItemFormVisibility()"
+    ></add-new-item-form>
+    <div class="top-action-control">
+      <button *ngIf="!addNewGridItemFormVisible"
+              [disabled]="isGridItemsLimit"
+              (click)="addNewGridItem()"
+              class="main-button"
+      >
+        Add new
+      </button>
+      <p *ngIf="isGridItemsLimit" class="limit-message" style="color: orange">
+        Yo have reached of grid items limit. <br>The limit is 10 items.
+      </p>
+    </div>
+  </div>
+  <grid></grid>
+</div>

@@ -1,0 +1,8 @@
+<div class="visualizer">
+  <div class="timer-container">
+    <timer [from]="0" [to]="59" (countUpdateEvent)="onCountUpdate($event)"></timer>
+  </div>
+  <div class="coloured-bar">
+    <color-view class="color-view" [color]="color"></color-view>
+  </div>
+</div>

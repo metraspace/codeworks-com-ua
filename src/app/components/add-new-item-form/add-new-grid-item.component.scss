@@ -1,0 +1,30 @@
+.form-body,
+.form-groups {
+  display: flex;
+}
+
+.form-group {
+  margin-left: 10px;
+}
+
+.input {
+  width: 100%;
+  height: 43px;
+  display: block;
+  padding: 12px;
+
+  &.__color-picker {
+    padding: 2px;
+    min-width: 70px;
+  }
+}
+
+.add-btn {
+  margin-left: 10px;
+}
+
+.form-error {
+  color: orange;
+  padding: 4px 0;
+  display: block;
+}

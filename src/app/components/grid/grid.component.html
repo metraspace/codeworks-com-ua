@@ -1,0 +1,19 @@
+<div class="grid">
+  <ng-container *ngIf="gridItems?.length">
+    <ul class="grid-head">
+      <li class="grid-head-item">From Seconds</li>
+      <li class="grid-head-item">To Seconds</li>
+      <li class="grid-head-item">Color</li>
+      <li class="grid-head-item">Action</li>
+    </ul>
+    <ul *ngFor="let item of gridItems; trackBy: trackItemByColor;" class="grid-body">
+      <li class="grid-item">{{ item.from }}</li>
+      <li class="grid-item">{{ item.to }}</li>
+      <li class="grid-item"><color-view class="color-view" [color]="item.color"></color-view></li>
+      <li class="grid-item" (click)="deleteGridItem(item)">
+        <button class="main-button">Delete</button>
+      </li>
+    </ul>
+  </ng-container>
+  <p *ngIf="!gridItems?.length">No available grid items</p>
+</div>

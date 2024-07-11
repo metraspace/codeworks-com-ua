@@ -1,0 +1,27 @@
+.grid-head {
+  width: 100%;
+  display: flex;
+  background: #262626;
+  padding: 8px 16px;
+  border-radius: 4px 4px 0 0;
+}
+
+.grid-head-item {
+  width: calc(100% / 4);
+}
+
+.grid-body {
+  width: 100%;
+  display: flex;
+  padding: 16px;
+  background: #2e2e2e;
+}
+
+.grid-item {
+  display: flex;
+  width: calc(100% / 4);
+}
+
+.color-view {
+  width: 70px;
+}

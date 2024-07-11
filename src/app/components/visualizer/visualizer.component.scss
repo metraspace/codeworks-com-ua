@@ -1,0 +1,27 @@
+.visualizer {
+  display: flex;
+  align-items: center;
+
+  .timer-container {
+    color: #fff;
+    width: 41px;
+    height: 41px;
+    padding: 12px;
+    margin-right: 40px;
+    border: 1px solid #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .coloured-bar {
+    width: 80px;
+    height: 40px;
+  }
+
+  .color-view {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+}

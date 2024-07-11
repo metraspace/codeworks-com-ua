@@ -1,0 +1,58 @@
+<form [formGroup]="form">
+  <div class="form-body">
+    <div>
+      <div class="form-groups">
+        <div class="form-group">
+          <input (change)="isCountOverlap = false"
+                 class="input"
+                 type="number"
+                 formControlName="from"
+                 name="from"
+                 placeholder="From Seconds:"
+          >
+          <span *ngIf="form.controls['from']?.['errors']?.['required']" class="form-error">This value is required</span>
+          <span *ngIf="form.controls['from']?.['errors']?.['min']" class="form-error">
+            The minimal allowed value is {{ MIN_TIMER_VALUE }}
+          </span>
+          <span *ngIf="form.controls['from']?.['errors']?.['max']" class="form-error">
+            The minimal allowed value is {{ MAX_TIMER_VALUE }}
+          </span>
+          <span *ngIf="!isStartValueLessThanEnd && !this.isCountsEqual" class="form-error">
+            Start value can't be more than end value
+          </span>
+        </div>
+        <div class="form-group">
+          <input (change)="isCountOverlap = false" class="input" type="number" formControlName="to" name="from" placeholder="To Seconds:">
+          <span *ngIf="form.controls['to']?.['errors']?.['required']" class="form-error">This value is required</span>
+          <span *ngIf="!isEndValueMoreThanStart && !this.isCountsEqual" class="form-error">
+            End value can't be less than start value
+          </span>
+        </div>
+      </div>
+      <div>
+        <span *ngIf="isCountOverlap" class="form-error">This counts overlap</span>
+        <span *ngIf="isCountsEqual" class="form-error">
+          Values can't be equal
+      </span>
+      </div>
+    </div>
+    <div class="form-group">
+      <input (change)="isColorUsed = false"
+             value="#fff"
+             class="input __color-picker"
+             type="color"
+             formControlName="color"
+             name="from"
+      >
+      <span>{{ form.get('color').value }}</span>
+      <span *ngIf="isColorUsed" class="form-error">This color already used</span>
+      <span *ngIf="form.controls['color']?.['errors']?.['required']" class="form-error">This value is required</span>
+    </div>
+    <button (click)="addItem()"
+            [disabled]="!isFormValid"
+            type="submit" class="main-button add-btn"
+    >
+      Save
+    </button>
+  </div>
+</form>

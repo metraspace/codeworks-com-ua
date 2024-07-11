@@ -1,0 +1,21 @@
+.overview {
+  width: 100%;
+  max-width: 90%;
+  margin: 0 auto;
+}
+
+.visualizer-container {
+  padding: 45px 0;
+}
+
+.top-actions-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+
+.top-action-control {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
