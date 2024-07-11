@@ -26,7 +26,7 @@ This project features a dynamic timer that counts seconds from 0 to 59, accompan
    The form facilitates the addition of new intervals, ensuring all entries meet the specified validation criteria.
    
 # Commands
-   Run `npm start` for a dev server.
+   Run `npm start` for a dev server started on `http://localhost:4200/`.
 
    Run `npm run build` to build the project.
 
