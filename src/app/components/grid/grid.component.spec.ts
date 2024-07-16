@@ -1,29 +1,26 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { GridComponent } from './grid.component';
 import { GridStateService, IGridItem } from '@app/services/grid-state/grid-state.service';
-import { GridComponent } from '@app/components';
-import { ColorViewComponent } from '@app/components';
 import { MockGridStateService } from '@app/services/grid-state/grid-state.service.spec';
 
 describe('GridComponent', () => {
   let component: GridComponent;
   let fixture: ComponentFixture<GridComponent>;
-  let mockGridStateService: MockGridStateService;
+  let gridStateService: MockGridStateService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [GridComponent, ColorViewComponent],
+      declarations: [ GridComponent ],
       providers: [
         { provide: GridStateService, useClass: MockGridStateService }
       ]
-    })
-      .compileComponents();
-
-    mockGridStateService = TestBed.inject(GridStateService);
+    }).compileComponents();
   });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(GridComponent);
     component = fixture.componentInstance;
+    gridStateService = TestBed.inject(GridStateService) as any;
     fixture.detectChanges();
   });
 
@@ -31,23 +28,24 @@ describe('GridComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should return grid items from the service', () => {
-    const items: IGridItem [] = component.gridItems;
-    expect(items.length).toBe(3);
-    expect(items[0].color).toBe('#ff0000');
-    expect(items[1].color).toBe('#00ff00');
-    expect(items[2].color).toBe('#0000ff');
+  it('should return grid items from GridStateService', () => {
+    const mockItems: IGridItem[] = [
+      { from: 1, to: 5, color: 'red' },
+      { from: 6, to: 10, color: 'blue' }
+    ];
+    spyOnProperty(gridStateService, 'items', 'get').and.returnValue(mockItems);
+    expect(component.gridItems).toEqual(mockItems);
   });
 
   it('should track item by color', () => {
-    const item: IGridItem = { color: '#ff0000', from: 0, to: 10 };
-    const trackByResult = component.trackItemByColor(0, item);
-    expect(trackByResult).toBe('#ff0000');
+    const item: IGridItem = { from: 1, to: 5, color: 'red' };
+    expect(component.trackItemByColor(0, item)).toBe('red');
   });
 
-  it('should delete a grid item', () => {
-    const item = mockGridStateService.items[0];
+  it('should call removeItem on GridStateService when deleteGridItem is called', () => {
+    const item: IGridItem = { from: 1, to: 5, color: 'red' };
+    spyOn(gridStateService, 'removeItem');
     component.deleteGridItem(item);
-    expect(mockGridStateService.items.length).toBe(2);
+    expect(gridStateService.removeItem).toHaveBeenCalledWith(item);
   });
 });

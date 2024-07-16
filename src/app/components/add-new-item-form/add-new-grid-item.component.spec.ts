@@ -7,7 +7,6 @@ import { MockGridStateService } from '@app/services/grid-state/grid-state.servic
 describe('AddNewGridItemComponent', () => {
   let component: AddNewGridItemComponent;
   let fixture: ComponentFixture<AddNewGridItemComponent>;
-  let mockGridStateService: MockGridStateService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -21,7 +20,6 @@ describe('AddNewGridItemComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(AddNewGridItemComponent);
     component = fixture.componentInstance;
-    mockGridStateService = TestBed.inject(GridStateService);
     fixture.detectChanges();
   });
 

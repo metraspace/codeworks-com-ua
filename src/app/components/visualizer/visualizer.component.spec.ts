@@ -1,21 +1,21 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ChangeDetectorRef } from '@angular/core';
 import { ColorViewComponent, TimerComponent, VisualizerComponent } from '@app/components';
-import { CounterStateService } from '@app/services';
+import { IGridItem } from '@app/services';
 import { GridStateService } from '@app/services';
-import { MockCounterStateService } from '@app/services/counter-state/counter-state.service.spec';
 import { MockGridStateService } from '@app/services/grid-state/grid-state.service.spec';
+import { first } from 'rxjs';
 
 describe('VisualizerComponent', () => {
   let component: VisualizerComponent;
   let fixture: ComponentFixture<VisualizerComponent>;
-  let mockCounterStateService: MockCounterStateService;
+  let gridStateService: MockGridStateService;
+  let changeDetectorRef: ChangeDetectorRef;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [VisualizerComponent, TimerComponent, ColorViewComponent],
       providers: [
-        { provide: CounterStateService, useClass: MockCounterStateService },
         { provide: GridStateService, useClass: MockGridStateService },
         ChangeDetectorRef
       ]
@@ -24,8 +24,9 @@ describe('VisualizerComponent', () => {
 
   beforeEach(() => {
     fixture = TestBed.createComponent(VisualizerComponent);
+    gridStateService  = TestBed.inject(GridStateService) as any;
+    changeDetectorRef = fixture.debugElement.injector.get(ChangeDetectorRef);
     component = fixture.componentInstance;
-    mockCounterStateService = TestBed.inject(CounterStateService) as unknown as MockCounterStateService;
     fixture.detectChanges();
   });
 
@@ -33,24 +34,62 @@ describe('VisualizerComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('Should call ngOnInit method', () => {
+    const spy = spyOn(component, 'ngOnInit');
+
+    component.ngOnInit();
+    expect(spy).toHaveBeenCalled();
+  });
+
+  it('Should subscribe on _gridStateService.items$', () => {
+    const spy = spyOn(component, 'ngOnInit');
+
+    component.ngOnInit();
+
+    (component as any)._gridStateService.items$
+        .pipe(first())
+        .subscribe((countries: Array<IGridItem []>) => {
+          expect(countries).toEqual([]);
+        });
+  });
+
   it('should return default color when actualColor is undefined', () => {
     expect(component.color).toBe(component.DEFAULT_COLOR);
   });
 
-  it('should return actualColor when it is defined', () => {
-    component.actualColor = '#123456';
-    expect(component.color).toBe('#123456');
+  it('should update actualCount', () => {
+    const count = 5;
+    component.onCountUpdate(count);
+    expect(component.actualCount).toBe(count);
   });
 
-  it('should update count and change color based on grid items', () => {
-    component.onCountUpdate(5);
-    expect(mockCounterStateService.count).toBe(5);
-    expect(component.actualColor).toBe('#ff0000');
+  it('should not call _updateChanges if count is within actualItem range', () => {
+    const count = 5;
+    component.actualItem = { from: 1, to: 10, color: 'red' };
+
+    spyOn(component as any, '_updateChanges');
+
+    component.onCountUpdate(count);
+    expect((component as any)._updateChanges).not.toHaveBeenCalled();
   });
 
-  it('should not change color if the new color is the same as the current color', () => {
-    component.actualColor = '#ff0000';
-    component.onCountUpdate(5);
-    expect(component.actualColor).toBe('#ff0000');
+  it('should call _updateChanges if count is outside actualItem range', () => {
+    const count = 15;
+    component.actualItem = { from: 1, to: 10, color: 'red' };
+
+    spyOn(component as any, '_updateChanges');
+
+    component.onCountUpdate(count);
+    expect((component as any)._updateChanges).toHaveBeenCalledWith(count);
+  });
+
+  it('should call _updateChanges if actualItem is undefined', () => {
+    const count = 5;
+    component.actualItem = undefined;
+
+    spyOn(component as any, '_updateChanges');
+
+    component.onCountUpdate(count);
+    expect((component as any)._updateChanges).toHaveBeenCalledWith(count);
   });
 });

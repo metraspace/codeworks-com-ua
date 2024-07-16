@@ -1,37 +1,48 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
-import { GridStateService, CounterStateService, IGridItem } from '@app/services';
+import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { GridStateService, IGridItem } from '@app/services';
 
 @Component({
   selector: 'visualizer',
   templateUrl: './visualizer.component.html',
   styleUrl: './visualizer.component.scss'
 })
-export class VisualizerComponent {
-  public actualColor: string;
+export class VisualizerComponent implements OnInit {
+  public actualItem: IGridItem;
+  public actualCount: number;
   public readonly DEFAULT_COLOR: string = '#fff';
 
+  private readonly _destroyRef: DestroyRef = inject(DestroyRef);
+
   constructor(
-    private readonly _changeDetectorRef: ChangeDetectorRef,
-    private readonly _counterStateService: CounterStateService,
-    private readonly _gridStateService: GridStateService
+      private readonly _changeDetectorRef: ChangeDetectorRef,
+      private readonly _gridStateService: GridStateService
   ) {
   }
 
   public get color(): string {
-    return this.actualColor || this.DEFAULT_COLOR;
+    return this.actualItem?.color || this.DEFAULT_COLOR;
+  }
+
+  public ngOnInit(): void {
+    this._gridStateService.items$
+        .pipe(takeUntilDestroyed(this._destroyRef))
+        .subscribe(() => this._updateChanges(this.actualCount));
   }
 
   public onCountUpdate(count: number): void {
-    this._counterStateService.count = count;
-    const actualCount: number = count;
-    const newColor: string = this._gridStateService.items.find(
-      (gridItem: IGridItem) => actualCount >= gridItem.from && actualCount <= gridItem.to
-    )?.color;
+    this.actualCount = count;
 
-    if (this.actualColor !== newColor) {
-      this.actualColor = newColor;
-      this._changeDetectorRef.markForCheck();
-      this._changeDetectorRef.detectChanges();
+    if (this.actualItem && count >= this.actualItem?.from && count <= this.actualItem?.to) {
+      return;
     }
+
+    this._updateChanges(count);
+  }
+
+  private _updateChanges(actualCount: number): void {
+    this.actualItem = this._gridStateService.getItem(actualCount);
+    this._changeDetectorRef.markForCheck();
+    this._changeDetectorRef.detectChanges();
   }
 }
