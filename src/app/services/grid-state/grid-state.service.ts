@@ -11,6 +11,7 @@ export interface IGridItem {
   providedIn: 'root'
 })
 export class GridStateService {
+  public addedColorsMap: Map<string, string> = new Map<string, string>;
   private readonly _itemsSubject$: BehaviorSubject<IGridItem []> = new BehaviorSubject([]);
   private _itemsMap: Map<number, IGridItem> = new Map<number, IGridItem>();
 
@@ -35,6 +36,7 @@ export class GridStateService {
       ...this._itemsSubject$.getValue(),
       gridItem
     ]);
+    this.addedColorsMap.set(gridItem.color, gridItem.color);
 
     this._setMapItem(gridItem);
   }
@@ -45,8 +47,13 @@ export class GridStateService {
         (item: IGridItem) => item.color !== gridItem.color
     );
 
+    this.addedColorsMap.delete(gridItem.color);
     this._removeMapItem(gridItem);
     this._itemsSubject$.next(items);
+  }
+
+  public checkColor(color: string): boolean {
+    return !!this.addedColorsMap.get(color);
   }
 
   private _setMapItem(item: IGridItem): void {

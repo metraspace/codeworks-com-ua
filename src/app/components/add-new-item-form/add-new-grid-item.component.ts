@@ -1,6 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { GridStateService, IGridItem } from '@app/services';
+import { GridStateService } from '@app/services';
 
 @Component({
   selector: 'add-new-item-form',
@@ -62,6 +62,10 @@ export class AddNewGridItemComponent implements OnInit {
     return from === to;
   }
 
+  public getFormError(property: string, validator: string) {
+    return this.form.controls[property]?.['errors']?.[validator];
+  }
+
   public addItem(): void {
     if (this._isColorAlreadyUsed()) {
       this.isColorUsed = true;
@@ -69,7 +73,7 @@ export class AddNewGridItemComponent implements OnInit {
       return;
     }
 
-    if (this.isOverlappingExistingRows()) {
+    if (this.isCountsOverlap()) {
       this.isCountOverlap = true;
 
       return;
@@ -104,17 +108,15 @@ export class AddNewGridItemComponent implements OnInit {
     );
   }
 
-  private isOverlappingExistingRows(): boolean {
+  private isCountsOverlap(): boolean {
     const {from, to} = this.form.getRawValue();
 
-    return this._gridStateService.items.some(
-      (row: IGridItem) => (from >= row.from && from <= row.to) || (to >= row.from && to <= row.to)
-    );
+    return !!this._gridStateService.getItem(from) || !!this._gridStateService.getItem(to);
   }
 
   private _isColorAlreadyUsed(): boolean {
     const color = this.form.get('color').value;
 
-    return this._gridStateService.items.some((row: IGridItem) => row.color === color);
+    return this._gridStateService.checkColor(color);
   }
 }
